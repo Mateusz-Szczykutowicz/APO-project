@@ -1,4 +1,25 @@
 footer {
-    height: 50px;
+    height: 70px;
     background-color: blueviolet;
+    display: flex;
+    flex-wrap: nowrap;
+
+    .add_new_bookmark {
+        min-width: 30px;
+        min-height: 30px;
+        width: 30px;
+        height: 30px;
+        font-size: 24px;
+        background-color: #fff;
+        color: #000;
+        border: 1px solid black;
+        margin: 20px 20px;
+    }
+
+    .bookmarks {
+        height: 70px;
+        flex-grow: 1;
+        background-color: brown;
+        overflow-y: scroll;
+    }
 }
