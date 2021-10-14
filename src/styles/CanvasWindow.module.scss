@@ -1,6 +1,20 @@
-.canvas_wrapper {
+.canvas_window_wrapper {
     display: none;
+    .canvas_wrapper {
+        width: 80vw;
+        background-color: chocolate;
+        .load_image {
+            display: block;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .canvas {
+            background-color: #999;
+            margin: 10px;
+        }
+    }
 }
+
 .active {
-    display: block;
+    display: flex;
 }

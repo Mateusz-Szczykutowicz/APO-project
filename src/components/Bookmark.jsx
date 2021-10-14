@@ -1,14 +1,17 @@
 import style from "../styles/Bookmark.module.scss";
 
 const Bookmark = (props) => {
-    const { activateBookmark, removeBookmark, id } = props;
+    const { activateBookmark, activeBookmark, removeBookmark, id, title } =
+        props;
     return (
         <>
             <div
-                className={style.bookmark}
+                className={`${style.bookmark} ${
+                    activeBookmark === id ? style.active : ""
+                }`}
                 onClick={() => activateBookmark(id)}
             >
-                <div>{props.title ? props.title : "Nie wybrano"}</div>
+                <div>{title ? title : "Nie wybrano"}</div>
                 <button
                     className={style.bookmarkRemove}
                     onClick={(e) => {
