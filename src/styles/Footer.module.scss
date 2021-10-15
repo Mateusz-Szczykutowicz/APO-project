@@ -1,6 +1,6 @@
 footer {
     height: 70px;
-    background-color: blueviolet;
+    background-color: #aaa;
     display: flex;
     flex-wrap: nowrap;
 
@@ -19,7 +19,7 @@ footer {
     .bookmarks {
         height: 70px;
         flex-grow: 1;
-        background-color: brown;
+        // background-color: brown;
         overflow-y: scroll;
     }
 }

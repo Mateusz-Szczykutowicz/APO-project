@@ -64,7 +64,7 @@ const CanvasWindow = (props) => {
             }
             ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
             ctx.putImageData(myImgData, 0, 0);
-
+            createHistogram();
             refreshPage();
         }
     };
@@ -96,7 +96,7 @@ const CanvasWindow = (props) => {
                 blue: myImgData.data[i + 2],
             });
         }
-        setHistogram(histogram.concat(newHistogram));
+        setHistogram(newHistogram);
     };
 
     return (

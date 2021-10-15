@@ -3,7 +3,7 @@
     flex-direction: column;
     justify-content: space-between;
     flex-grow: 1;
-    background-color: cadetblue;
+    background-color: #aaa;
     margin: 0 20px;
     height: 85vh;
     .operation {
@@ -21,11 +21,19 @@
         display: block;
         height: 360px;
         width: 100%;
-        background-color: crimson;
+        // background-color: crimson;
         .canvas {
             margin: auto;
             display: block;
-            background-color: #999;
+            background-color: #fff;
+            border: 1px solid black;
+        }
+        button {
+            margin: 5px;
+            background-color: #fff;
+            border: 1px solid black;
+            padding: 5px 10px;
+            font-size: 16px;
         }
     }
 }
