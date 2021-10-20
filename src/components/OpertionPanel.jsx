@@ -7,6 +7,10 @@ const OperationPanel = (props) => {
     const [ctx, setCtx] = useState();
     const [myCanvas, setMyCanvas] = useState();
     const [scale, setScale] = useState(20);
+    const [lutActive, setLutActive] = useState(false);
+    const [lutRed, setLutRed] = useState([]);
+    const [lutGreen, setLutGreen] = useState([]);
+    const [lutBlue, setLutBlue] = useState([]);
 
     useEffect(() => {
         setCtx(canvasRef.current.getContext("2d"));
@@ -42,7 +46,7 @@ const OperationPanel = (props) => {
     const drawHistogram = (value, color, scale) => {
         ctx.strokeStyle = color;
         ctx.beginPath();
-        for (let i = 0; i <= 256; i++) {
+        for (let i = 0; i < 256; i++) {
             ctx.moveTo(i, myCanvas.height);
             ctx.lineTo(
                 i,
@@ -95,30 +99,121 @@ const OperationPanel = (props) => {
         if (ctx) {
             ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
             const { red } = countHistogram();
-            drawHistogram(red, "gray", scale);
+            drawHistogram(red, "black", scale);
         }
     };
 
+    const createLut = () => {
+        if (!lutActive) {
+            const colors = countHistogram();
+            const red = [];
+            const green = [];
+            const blue = [];
+            for (let i = 0; i < 256; i++) {
+                red.push({
+                    index: i,
+                    value: colors.red[i] === undefined ? 0 : colors.red[i],
+                });
+                green.push({
+                    index: i,
+                    value: colors.green[i] === undefined ? 0 : colors.green[i],
+                });
+                blue.push({
+                    index: i,
+                    value: colors.blue[i] === undefined ? 0 : colors.blue[i],
+                });
+            }
+            setLutRed(red);
+            setLutGreen(green);
+            setLutBlue(blue);
+            console.log("item :>> ", red);
+        }
+
+        setLutActive(!lutActive);
+    };
+
+    const getIndexLut = () => {
+        const item = [];
+        for (let i = 0; i < 256; i++) {
+            item.push(i);
+        }
+        return item.map((i) => (
+            <div key={i} className={style.item}>
+                {i}
+            </div>
+        ));
+    };
+
+    const getRedLut = () => {
+        return lutRed.map((i) => (
+            <div key={i.index} className={`${style.item} ${style.red}`}>
+                {i.value}
+            </div>
+        ));
+    };
+
+    const getGreenLut = () => {
+        return lutGreen.map((i) => (
+            <div key={i.index} className={`${style.item} ${style.green}`}>
+                {i.value}
+            </div>
+        ));
+    };
+
+    const getBlueLut = () => {
+        return lutBlue.map((i) => (
+            <div key={i.index} className={`${style.item} ${style.blue}`}>
+                {i.value}
+            </div>
+        ));
+    };
+
     return (
-        <div className={style.operation_wrapper}>
-            <div className={style.operation}>
-                <button onClick={grayscale}>Szaroodcieniowy</button>
-                <button onClick={reversColor}>Odwrócenie kolorów</button>
+        <div className={style.wrapper}>
+            <div className={style.operation_wrapper}>
+                <div className={style.operation}>
+                    <button onClick={grayscale}>Szaroodcieniowy</button>
+                    <button onClick={reversColor}>Odwrócenie kolorów</button>
+                </div>
+                <div className={style.histogram}>
+                    <canvas
+                        width="256"
+                        height="256"
+                        className={style.canvas}
+                        ref={canvasRef}
+                    ></canvas>
+                    <button onClick={getHistogramRGB}>RGB</button>
+                    <button onClick={getHistogramRed}>R</button>
+                    <button onClick={getHistogramGreen}>G</button>
+                    <button onClick={getHistogramBlue}>B</button>
+                    <button onClick={getHistogramGray}>Gray</button>
+                    <button onClick={clearHistogram}>Wyczyść</button>
+                    <button onClick={createLut}>LUT</button>
+                </div>
             </div>
-            <div className={style.histogram}>
-                <canvas
-                    width="256"
-                    height="256"
-                    className={style.canvas}
-                    ref={canvasRef}
-                ></canvas>
-                <button onClick={getHistogramRGB}>RGB</button>
-                <button onClick={getHistogramRed}>R</button>
-                <button onClick={getHistogramGreen}>G</button>
-                <button onClick={getHistogramBlue}>B</button>
-                <button onClick={getHistogramGray}>Gray</button>
-                <button onClick={clearHistogram}>Wyczyść</button>
-            </div>
+            {lutActive ? (
+                <div className={style.lut}>
+                    <h2>LUT</h2>
+                    <div className={style.table}>
+                        <div className={style.lut_column}>
+                            <div>Index</div>
+                            {getIndexLut()}
+                        </div>
+                        <div className={style.lut_column}>
+                            <div>Red</div>
+                            {getRedLut()}
+                        </div>
+                        <div className={style.lut_column}>
+                            <div>Green</div>
+                            {getGreenLut()}
+                        </div>
+                        <div className={style.lut_column}>
+                            <div>Blue</div>
+                            {getBlueLut()}
+                        </div>
+                    </div>
+                </div>
+            ) : null}
         </div>
     );
 };

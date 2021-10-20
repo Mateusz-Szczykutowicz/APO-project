@@ -1,39 +1,79 @@
-.operation_wrapper {
+.wrapper {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex-grow: 1;
-    background-color: #aaa;
-    margin: 0 20px;
-    height: 85vh;
-    .operation {
-        button {
-            width: 90%;
-            display: block;
-            margin: 10px 20px;
-            background-color: #fff;
-            border: 1px solid black;
-            padding: 5px 10px;
-            font-size: 16px;
+    .lut {
+        text-align: center;
+        flex-grow: 1;
+        min-width: 200px;
+        // background-color: cadetblue;
+        border: 1px solid black;
+        height: 88vh;
+        overflow-y: scroll;
+        .table {
+            display: flex;
+            width: 100%;
+            .lut_column {
+                text-align: center;
+                padding: 5px;
+                // background-color: blueviolet;
+                font-size: 18px;
+                .item {
+                    margin-top: 5px;
+                }
+                .red {
+                    color: red;
+                }
+                .green {
+                    color: green;
+                }
+                .blue {
+                    color: blue;
+                }
+            }
         }
     }
-    .histogram {
-        display: block;
-        height: 360px;
-        width: 100%;
-        // background-color: crimson;
-        .canvas {
-            margin: auto;
-            display: block;
-            background-color: #fff;
-            border: 1px solid black;
+    .operation_wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex-grow: 1;
+        background-color: #aaa;
+        margin: 0 20px;
+        height: 85vh;
+        .operation {
+            // background-color: aquamarine;
+            flex-grow: 1;
+            overflow-y: scroll;
+            border-bottom: 1px solid black;
+            button {
+                width: 90%;
+                display: block;
+                margin: 10px 20px;
+                background-color: #fff;
+                border: 1px solid black;
+                padding: 5px 10px;
+                font-size: 16px;
+            }
         }
-        button {
-            margin: 5px;
-            background-color: #fff;
-            border: 1px solid black;
-            padding: 5px 10px;
-            font-size: 16px;
+        .histogram {
+            display: block;
+            height: 360px;
+            width: 100%;
+            // background-color: crimson;
+            margin-left: 10px;
+            .canvas {
+                margin: auto;
+                margin-top: 15px;
+                display: block;
+                background-color: #fff;
+                border: 1px solid black;
+            }
+            button {
+                margin: 5px;
+                background-color: #fff;
+                border: 1px solid black;
+                padding: 5px 10px;
+                font-size: 16px;
+            }
         }
     }
 }
