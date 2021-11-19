@@ -3,6 +3,7 @@ import { createRef, useEffect, useState } from "react";
 import OptionPanel from "./OptionPanel";
 import OperationPanel from "./OpertionPanel";
 import { createHistogram } from "../scripts/CanvasWindow.script";
+// import cv from "../scripts/opencv.js";
 
 const CanvasWindow = (props) => {
     const {
@@ -273,7 +274,7 @@ const CanvasWindow = (props) => {
     };
 
     const stretchHistogramWithRange = () => {
-        const q5 = 255; // tło
+        const q5 = 0; // tło
 
         const myImgData = ctx.getImageData(0, 0, image.width, image.height);
         // console.log("myImgData.data.lenght :>> ", myImgData.data.length);
