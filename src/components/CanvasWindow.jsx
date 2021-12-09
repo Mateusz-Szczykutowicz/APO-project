@@ -15,6 +15,7 @@ const CanvasWindow = (props) => {
         imageProps,
     } = props;
     const myRef = createRef();
+    const myRef2 = createRef();
     const [limit, setLimit] = useState(127);
     const [max, setMax] = useState(255);
     const [min, setMin] = useState(0);
@@ -23,17 +24,25 @@ const CanvasWindow = (props) => {
     const [q3, setQ3] = useState(0);
     const [q4, setQ4] = useState(255);
     const [ctx, setCtx] = useState();
+    const [ctx2, setCtx2] = useState();
     const [image] = useState(new Image());
+    const [image2] = useState(new Image());
     const [isLoadedImage, setIsLoadedImage] = useState(isLoaded);
     const [myCanvas, setMyCanvas] = useState();
+    const [myCanvas2, setMyCanvas2] = useState();
     const [refresh, setRefresh] = useState(false);
     const [histogram, setHistogram] = useState([]);
     const drawImage = (imageVar) => {
         image.src = imageVar;
     };
+    const drawImage2 = (imageVar) => {
+        image2.src = imageVar;
+    };
     useEffect(() => {
         setCtx(myRef.current.getContext("2d"));
+        setCtx2(myRef2.current.getContext("2d"));
         setMyCanvas(myRef.current);
+        setMyCanvas2(myRef2.current);
         if (imageProps) {
             // console.log("imageProps :>> ", imageProps);
             image.src = imageProps.src;
@@ -55,10 +64,26 @@ const CanvasWindow = (props) => {
         setIsLoadedImage(true);
     };
 
+    const loadImage2 = (e) => {
+        const fr = new FileReader();
+        fr.onload = () => {
+            drawImage2(fr.result);
+        };
+        if (e.target.files[0]) fr.readAsDataURL(e.target.files[0]);
+    };
+
     image.addEventListener("load", () => {
         if (ctx) {
             ctx.drawImage(image, 0, 0);
             setHistogram(createHistogram(ctx, image));
+            refreshPage();
+        }
+    });
+
+    image2.addEventListener("load", () => {
+        if (ctx2) {
+            ctx2.drawImage(image2, 0, 0);
+            setHistogram(createHistogram(ctx2, image2));
             refreshPage();
         }
     });
@@ -293,12 +318,140 @@ const CanvasWindow = (props) => {
                 myImgData.data[i + 1] = q5;
             }
 
-            if (myImgData.data[i + 2] >= p1 && myImgData.data[i] <= p2) {
+            if (myImgData.data[i + 2] >= p1 && myImgData.data[i + 2] <= p2) {
                 myImgData.data[i + 2] =
                     (myImgData.data[i + 2] - p1) * ((q4 - q3) / (p2 - p1)) + q3; //niebieski
             } else {
                 myImgData.data[i + 2] = q5;
             }
+        }
+        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        ctx.putImageData(myImgData, 0, 0);
+        setHistogram(createHistogram(ctx, image));
+        refreshPage();
+    };
+
+    const operationAND = () => {
+        const myImgData = ctx.getImageData(0, 0, image.width, image.height);
+        const myImgData2 = ctx2.getImageData(0, 0, image.width, image.height);
+
+        for (let i = 0; i < myImgData.data.length; i += 4) {
+            const whitePixel = {
+                red:
+                    myImgData.data[i] >= 127 && myImgData2.data[i] >= 127
+                        ? myImgData2.data[i]
+                        : 0,
+                green:
+                    myImgData.data[i + 1] >= 127 &&
+                    myImgData2.data[i + 1] >= 127
+                        ? myImgData2.data[i + 1]
+                        : 0,
+                blue:
+                    myImgData.data[i + 2] >= 127 &&
+                    myImgData2.data[i + 2] >= 127
+                        ? myImgData2.data[i + 2]
+                        : 0,
+            };
+            myImgData.data[i] = whitePixel.red; //czerwony
+            myImgData.data[i + 1] = whitePixel.green; //zielony
+            myImgData.data[i + 2] = whitePixel.blue; //niebieski
+        }
+        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        ctx.putImageData(myImgData, 0, 0);
+        setHistogram(createHistogram(ctx, image));
+        refreshPage();
+    };
+
+    const operationOR = () => {
+        const myImgData = ctx.getImageData(0, 0, image.width, image.height);
+        const myImgData2 = ctx2.getImageData(0, 0, image.width, image.height);
+
+        for (let i = 0; i < myImgData.data.length; i += 4) {
+            const pixel = {
+                red:
+                    myImgData.data[i] > myImgData2.data[i]
+                        ? myImgData.data[i]
+                        : myImgData2.data[i],
+                green:
+                    myImgData.data[i + 1] > myImgData2.data[i + 1]
+                        ? myImgData.data[i + 1]
+                        : myImgData2.data[i + 1],
+                blue:
+                    myImgData.data[i + 2] > myImgData2.data[i + 2]
+                        ? myImgData.data[i + 2]
+                        : myImgData2.data[i + 2],
+            };
+            const or = {
+                red:
+                    myImgData.data[i] >= 127 || myImgData2.data[i] >= 127
+                        ? pixel.red
+                        : 0,
+                green:
+                    myImgData.data[i + 1] >= 127 ||
+                    myImgData2.data[i + 1] >= 127
+                        ? pixel.green
+                        : 0,
+                blue:
+                    myImgData.data[i + 2] >= 127 ||
+                    myImgData2.data[i + 2] >= 127
+                        ? pixel.blue
+                        : 0,
+            };
+            myImgData.data[i] = or.red; //czerwony
+            myImgData.data[i + 1] = or.green; //zielony
+            myImgData.data[i + 2] = or.blue; //niebieski
+        }
+        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        ctx.putImageData(myImgData, 0, 0);
+        setHistogram(createHistogram(ctx, image));
+        refreshPage();
+    };
+
+    const operationXOR = () => {
+        const myImgData = ctx.getImageData(0, 0, image.width, image.height);
+        const myImgData2 = ctx2.getImageData(0, 0, image.width, image.height);
+
+        for (let i = 0; i < myImgData.data.length; i += 4) {
+            const pixel = {
+                red:
+                    myImgData.data[i] > myImgData2.data[i]
+                        ? myImgData.data[i]
+                        : myImgData2.data[i],
+                green:
+                    myImgData.data[i + 1] > myImgData2.data[i + 1]
+                        ? myImgData.data[i + 1]
+                        : myImgData2.data[i + 1],
+                blue:
+                    myImgData.data[i + 2] > myImgData2.data[i + 2]
+                        ? myImgData.data[i + 2]
+                        : myImgData2.data[i + 2],
+            };
+
+            const xor = {
+                red:
+                    (myImgData.data[i] >= 127) ^ (myImgData2.data[i] >= 127)
+                        ? pixel.red
+                        : 0,
+                green:
+                    (myImgData.data[i + 1] >= 127) ^
+                    (myImgData2.data[i + 1] >= 127)
+                        ? pixel.green
+                        : 0,
+                blue:
+                    (myImgData.data[i + 2] >= 127) ^
+                    (myImgData2.data[i + 2] >= 127)
+                        ? pixel.blue
+                        : 0,
+            };
+
+            const whitePixel = {
+                red: xor.red,
+                green: xor.green,
+                blue: xor.blue,
+            };
+            myImgData.data[i] = whitePixel.red; //czerwony
+            myImgData.data[i + 1] = whitePixel.green; //zielony
+            myImgData.data[i + 2] = whitePixel.blue; //niebieski
         }
         ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
         ctx.putImageData(myImgData, 0, 0);
@@ -329,38 +482,57 @@ const CanvasWindow = (props) => {
                     />
                 )}
 
+                <input
+                    className={style.load_image}
+                    type="file"
+                    name="image2"
+                    id="select_image2"
+                    onChange={(e) => loadImage2(e)}
+                />
+
                 <canvas
                     width="1200"
                     height="800"
                     className={style.canvas}
                     ref={myRef}
                 ></canvas>
+                <canvas
+                    width="1200"
+                    height="900"
+                    className={style.canvas}
+                    ref={myRef2}
+                ></canvas>
             </div>
-            <OperationPanel
-                reversColor={reversColor}
-                grayscale={grayscale}
-                stretchHistogram={stretchHistogram}
-                histogram={histogram}
-                threshholdBinary={threshholdBinary}
-                threshholdWithSlider={threshholdWithSlider}
-                limiColorLevels={limiColorLevels}
-                limit={limit}
-                setLimit={setLimit}
-                max={max}
-                min={min}
-                setMax={setMax}
-                setMin={setMin}
-                equalizeHistogram={equalizeHistogram}
-                stretchHistogramWithRange={stretchHistogramWithRange}
-                p1={p1}
-                p2={p2}
-                q3={q3}
-                q4={q4}
-                setP1={setP1}
-                setP2={setP2}
-                setQ3={setQ3}
-                setQ4={setQ4}
-            />
+            {isLoadedImage ? (
+                <OperationPanel
+                    reversColor={reversColor}
+                    grayscale={grayscale}
+                    stretchHistogram={stretchHistogram}
+                    histogram={histogram}
+                    threshholdBinary={threshholdBinary}
+                    threshholdWithSlider={threshholdWithSlider}
+                    limiColorLevels={limiColorLevels}
+                    limit={limit}
+                    setLimit={setLimit}
+                    max={max}
+                    min={min}
+                    setMax={setMax}
+                    setMin={setMin}
+                    equalizeHistogram={equalizeHistogram}
+                    stretchHistogramWithRange={stretchHistogramWithRange}
+                    p1={p1}
+                    p2={p2}
+                    q3={q3}
+                    q4={q4}
+                    setP1={setP1}
+                    setP2={setP2}
+                    setQ3={setQ3}
+                    setQ4={setQ4}
+                    operationAND={operationAND}
+                    operationOR={operationOR}
+                    operationXOR={operationXOR}
+                />
+            ) : null}
         </div>
     );
 };

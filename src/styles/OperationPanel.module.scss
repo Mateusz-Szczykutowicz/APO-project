@@ -56,10 +56,11 @@
         }
         .histogram {
             display: block;
-            height: 360px;
+            height: 400px;
             width: 100%;
             // background-color: crimson;
             margin-left: 10px;
+            margin-top: 10px;
             .canvas {
                 margin: auto;
                 margin-top: 15px;
@@ -69,6 +70,7 @@
             }
             button {
                 margin: 5px;
+                margin-top: 20px;
                 background-color: #fff;
                 border: 1px solid black;
                 padding: 5px 10px;

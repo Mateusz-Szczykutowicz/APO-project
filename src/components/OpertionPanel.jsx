@@ -26,6 +26,9 @@ const OperationPanel = (props) => {
         setQ4,
         equalizeHistogram,
         stretchHistogramWithRange,
+        operationAND,
+        operationOR,
+        operationXOR,
     } = props;
     const canvasRef = createRef();
     const [ctx, setCtx] = useState();
@@ -43,12 +46,17 @@ const OperationPanel = (props) => {
     const drawHistogram = (value, color, scale) => {
         ctx.strokeStyle = color;
         ctx.beginPath();
+        ctx.font = "bold 12px Arial, sans-serif";
+        ctx.fillText("0", 10, myCanvas.height - 5);
+        ctx.fillText("255", 266, myCanvas.height - 5);
+        ctx.fillText((scale * 255).toString(), 10, 20);
         for (let i = 0; i < 256; i++) {
-            ctx.moveTo(i, myCanvas.height);
+            ctx.moveTo(i + 10, myCanvas.height - 10);
             ctx.lineTo(
-                i,
+                i + 10,
                 myCanvas.height -
-                    (value[i] === undefined ? 0 : value[i]) / scale
+                    (value[i] === undefined ? 0 : value[i]) / scale -
+                    10
             );
         }
         ctx.stroke();
@@ -311,11 +319,14 @@ const OperationPanel = (props) => {
                     <button onClick={stretchHistogramWithRange}>
                         Rozciąganie histogramu z zakresu p1, p2 do q3, q4
                     </button>
+                    <button onClick={operationAND}>AND</button>
+                    <button onClick={operationOR}>OR</button>
+                    <button onClick={operationXOR}>XOR</button>
                 </div>
                 <div className={style.histogram}>
                     <canvas
-                        width="256"
-                        height="256"
+                        width="300"
+                        height="300"
                         className={style.canvas}
                         ref={canvasRef}
                     ></canvas>
