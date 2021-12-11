@@ -4,6 +4,8 @@ import OptionPanel from "./OptionPanel";
 import OperationPanel from "./OpertionPanel";
 import { createHistogram } from "../scripts/CanvasWindow.script";
 // import cv from "../scripts/opencv.js";
+// const cv = require("https://docs.opencv.org/4.x/opencv.js");
+// const cv = require("../scripts/opencv.js");
 
 const CanvasWindow = (props) => {
     const {
@@ -481,14 +483,15 @@ const CanvasWindow = (props) => {
                         onChange={(e) => loadImage(e)}
                     />
                 )}
-
-                <input
-                    className={style.load_image}
-                    type="file"
-                    name="image2"
-                    id="select_image2"
-                    onChange={(e) => loadImage2(e)}
-                />
+                {isLoadedImage ? (
+                    <input
+                        className={style.load_image}
+                        type="file"
+                        name="image2"
+                        id="select_image2"
+                        onChange={(e) => loadImage2(e)}
+                    />
+                ) : null}
 
                 <canvas
                     width="1200"
